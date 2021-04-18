@@ -67,6 +67,12 @@ void handleCalibration() {
     
   if (joint == "s") {
     Serial.print("s");
+  } else if (joint == "cycle") {
+    Serial.print("s");
+    delay(1000);
+    Serial.print("kbalance");
+    delay(1000);
+    Serial.print("c");
   } else {
     Serial.print("c" + joint + " " + offset);
   }

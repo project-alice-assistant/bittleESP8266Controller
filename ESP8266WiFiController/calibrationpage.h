@@ -52,6 +52,9 @@ const char calibrationpage[] PROGMEM = R"=====(
     <div class="card">
         <button class="redBG" style="width: 100%" onclick="location.href='/calibration?c=s'">Save offsets</button>
     </div>
+    <div class="card">
+        <button class="redBG" style="width: 100%" onclick="location.href='/calibration?c=cycle'">Check with a cycle</button>
+    </div>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
             let query = window.location.search;
