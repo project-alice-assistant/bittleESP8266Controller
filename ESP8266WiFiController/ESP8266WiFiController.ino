@@ -25,6 +25,7 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>         // https://github.com/tzapu/WiFiManager
+#include <ArduinoJson.h>
 
 #include "commons.h"
 #include "mainpage.h"
@@ -49,11 +50,26 @@ void handleMainPage() {
 }
 
 void handleActionPage() {
-  String cmd = server.arg("cmd");
-  if (cmd != 0) {
-    Serial.print(cmd); 
+  if (server.hasArg("cmd")) {
+    Serial.println(server.arg("cmd"));
   }
   server.send(200, "text/html", renderHtml(FPSTR(actionpage), "Actions"));
+}
+
+void handleCommand() {
+  StaticJsonDocument<30> data;
+  DeserializationError error = deserializeJson(data, server.arg("plain"));
+  
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+  }
+
+  const char* cmd = data["cmd"];
+  Serial.print(cmd);
+  server.send(200);
+  Serial.println("");
 }
 
 void handleCalibrationPage() {
@@ -69,13 +85,16 @@ void handleCalibration() {
     Serial.print("s");
   } else if (joint == "cycle") {
     Serial.print("s");
-    delay(1000);
+    delay(500);
+    Serial.print("ksit");
+    delay(2000);
     Serial.print("kbalance");
-    delay(1000);
+    delay(2000);
     Serial.print("c");
   } else {
     Serial.print("c" + joint + " " + offset);
   }
+  Serial.println("");
   server.send(200, "text/html", renderHtml(FPSTR(calibrationpage), "Calibration"));
 }
 
@@ -99,7 +118,8 @@ void setup(void) {
 
   // HTTP server started with handlers
   server.on("/", handleMainPage);
-  server.on("/actionpage", handleActionPage);
+  server.on("/commander", handleCommand);
+  server.on("/actions", handleActionPage);
   server.on("/calibrationpage", handleCalibrationPage);
   server.on("/calibration", handleCalibration);
 

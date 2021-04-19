@@ -182,6 +182,18 @@ const char head[] PROGMEM = R"=====(
             let title = "%TITLE%";
             document.getElementById(title).classList.add('active')
         });
+        function sendCmd(cmd) {
+            fetch('/commander', {
+                method: "POST",
+                body: JSON.stringify({
+                    cmd: cmd
+                })
+            }).then(result => {
+               console.log(`Sent "${cmd}" to Bittle`);
+            }).catch(() => {
+                console.warn(`Failed sending "${cmd}" to Bittle`);
+            });
+        }
     </script>
 </head>
 
@@ -189,7 +201,7 @@ const char head[] PROGMEM = R"=====(
 <div class="header">
     <ul>
         <li><a id="Home" href="/">Home</a></li>
-        <li><a id="Actions" href="/actionpage">Actions</a></li>
+        <li><a id="Actions" href="/actions">Actions</a></li>
         <li><a id="Calibration" href="/calibrationpage">Calibration</a></li>
     </ul>
     <h1 id="pageTitle">%TITLE%</h1>

@@ -22,38 +22,36 @@ const char actionpage[] PROGMEM = R"=====(
         <button onclick="movement('F')" style="width: 100%;">Forward</button>
         <button onclick="movement('L')" style="width: 50%;">Forward Left</button>
         <button onclick="movement('R')" style="width: 50%;">Forward Right</button>
-        <button onclick="location.href='/actionpage?cmd=kbkL'" style="width: 50%;">Back Left</button>
-        <button onclick="location.href='/actionpage?cmd=kbkR'" style="width: 50%;">Back Right</button>
-        <button onclick="location.href='/actionpage?cmd=kbk'" style="width: 100%;">Back</button>
+        <button onclick="sendCmd('kbkL')" style="width: 50%;">Back Left</button>
+        <button onclick="sendCmd('kbkR')" style="width: 50%;">Back Right</button>
+        <button onclick="sendCmd('kbk')" style="width: 100%;">Back</button>
     </div>
     <h2 class="center">Mode</h2>
     <div class="card wide">
-        <button onclick="location.href='/actionpage?cmd=g'">Gyro On/Off</button>
-        <button onclick="location.href='/actionpage?cmd=c'">Calibration</button>
-        <button onclick="location.href='/actionpage?cmd=kbalance'">Balanced</button>
+        <button onclick="sendCmd('g')">Gyro On/Off</button>
+        <button onclick="sendCmd('c')">Calibration</button>
+        <button onclick="sendCmd('kbalance')">Balanced</button>
     </div>
     <h2>Actions</h2>
     <div class="card wide">
-        <button onclick="location.href='/actionpage?cmd=ksit'">Sit</button>
-        <button onclick="location.href='/actionpage?cmd=kck'">Check</button>
-        <button onclick="location.href='/actionpage?cmd=kbuttUp'">Buttup</button>
-        <button onclick="location.href='/actionpage?cmd=khi'">Hello</button>
-        <button onclick="location.href='/actionpage?cmd=kstr'">Stretch</button>
-        <button onclick="location.href='/actionpage?cmd=kpee'">Pee</button>
-        <button onclick="location.href='/actionpage?cmd=kpu'">Push ups</button>
-        <button onclick="location.href='/actionpage?cmd=kvt'">Stepping</button>
-        <button onclick="location.href='/actionpage?cmd=lu'">Look up</button>
-        <button onclick="location.href='/actionpage?cmd=kbf'">Backflip</button>
-        <button onclick="location.href='/actionpage?cmd=kbdF'">Jumps</button>
-        <button onclick="location.href='/actionpage?cmd=krc'">Recover</button>
-        <button class="redBG" style="width: 100%" onclick="location.href='/actionpage?cmd=d'">STOP</button>
+        <button onclick="sendCmd('ksit')">Sit</button>
+        <button onclick="sendCmd('kck')">Check</button>
+        <button onclick="sendCmd('kbuttUp')">Buttup</button>
+        <button onclick="sendCmd('khi')">Hello</button>
+        <button onclick="sendCmd('kstr')">Stretch</button>
+        <button onclick="sendCmd('kpee')">Pee</button>
+        <button onclick="sendCmd('kpu')">Push ups</button>
+        <button onclick="sendCmd('kvt')">Stepping</button>
+        <button onclick="sendCmd('lu')">Look up</button>
+        <button onclick="sendCmd('kbf')">Backflip</button>
+        <button onclick="sendCmd('kbdF')">Jumps</button>
+        <button onclick="sendCmd('krc')">Recover</button>
+        <button class="redBG" style="width: 100%" onclick="sendCmd('d')">STOP</button>
     </div>
     <h2 class="center">Custom commands</h2>
-    <form action="/action" method="get">
-        <div class="center" style="width: 100%; margin-top: 25px;">
-            <input name="name" type="text" placeholder="input command"><input type="submit" value="Send"/>
-        </div>
-    </form>
+    <div class="center" style="width: 100%; margin-top: 25px;">
+        <input id="input" name="name" type="text" placeholder="input command"><button onclick="sendInputCmd()">Send</button>
+    </div>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
             let query = window.location.search;
@@ -74,7 +72,12 @@ const char actionpage[] PROGMEM = R"=====(
 
         function movement(direction) {
             const movementType = document.querySelector('input[name="movementType"]:checked').value;
-            window.location.href = `/actionpage?cmd=k${movementType}${direction}`;
+            sendCmd(`k${movementType}${direction}`);
+        }
+
+        function sendInputCmd() {
+            const cmd = document.getElementById('input').value;
+            sendCmd(cmd);
         }
     </script>
 </div>
