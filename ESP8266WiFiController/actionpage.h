@@ -49,25 +49,26 @@ const char actionpage[] PROGMEM = R"=====(
         <button class="redBG" style="width: 100%" onclick="sendCmd('d')">STOP</button>
     </div>
     <h2 class="center">Custom commands</h2>
-    <div class="center" style="width: 100%; margin-top: 25px;">
-        <input id="input" name="name" type="text" placeholder="input command"><button onclick="sendInputCmd()">Send</button>
+    <div class="card">
+        <input id="input" style="width: 60%" name="name" type="text" placeholder="input command"><button  style="width: 39%" onclick="sendInputCmd()">Send</button>
+    </div>
+    <div class="card">
+        <div class="console" id="serialOutput">Serial output</div>
     </div>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            let query = window.location.search;
-            const urlParams = new URLSearchParams(query);
-            if (urlParams.has('cmd')) {
-                let cmd = urlParams.get('cmd');
-                if (cmd.startsWith('kwk')) {
-                    document.getElementById('walk').checked = true;
-                } else if (cmd.startsWith('krn')) {
-                    document.getElementById('run').checked = true;
-                } else if (cmd.startsWith('kcr')) {
-                    document.getElementById('crawl').checked = true;
-                } else if (cmd.startsWith('ktr')) {
-                    document.getElementById('trot').checked = true;
-                }
-            }
+            setInterval(function() {
+                fetch('/getOutput', {
+                    method: "POST"
+                }).then(response => {
+                    return response.text();
+                }).then(text => {
+                    if (!text) {
+                      return;
+                    }
+                    document.getElementById('serialOutput').innerHTML = `${text}<br/>${document.getElementById('serialOutput').innerHTML}`;
+                });
+            }, 500);
         });
 
         function movement(direction) {

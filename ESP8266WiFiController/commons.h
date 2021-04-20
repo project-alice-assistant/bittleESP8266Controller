@@ -96,6 +96,7 @@ const char head[] PROGMEM = R"=====(
             background-color: var(--secondary);
             margin: 0 auto 25px;
             justify-content: center;
+            align-items: center;
             min-height: 50px;
         }
 
@@ -115,10 +116,24 @@ const char head[] PROGMEM = R"=====(
             cursor: pointer;
             width: 33.333%;
             outline: none;
+            padding: 0;
+            margin: 0;
         }
 
         button:hover {
             background-color: var(--hover);
+        }
+
+        .console {
+            width: 100%;
+            height: 250px;
+            margin: 10px;
+            background-color: var(--main);
+            font-size: 1em;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         .footer {
@@ -174,6 +189,17 @@ const char head[] PROGMEM = R"=====(
 
         button.redBG:hover {
             background-color: red;
+        }
+
+        .linkAdvert {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .link {
+            display: block;
+            margin: 25px;
+            width: 100%;
         }
 
     </style>

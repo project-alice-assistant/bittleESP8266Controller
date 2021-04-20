@@ -51,7 +51,7 @@ void handleMainPage() {
 
 void handleActionPage() {
   if (server.hasArg("cmd")) {
-    Serial.println(server.arg("cmd"));
+    Serial.print(server.arg("cmd"));
   }
   server.send(200, "text/html", renderHtml(FPSTR(actionpage), "Actions"));
 }
@@ -66,24 +66,9 @@ void handleCommand() {
     return;
   }
 
-  const char* cmd = data["cmd"];
-  Serial.print(cmd);
-  server.send(200);
-  Serial.println("");
-}
+  const String cmd = data["cmd"];
 
-void handleCalibrationPage() {
-  server.send(200, "text/html", renderHtml(FPSTR(calibrationpage), "Calibration"));
-  Serial.print("c");
-}
-
-void handleCalibration() {
-  String joint = server.arg("c");
-  String offset = server.arg("o");
-    
-  if (joint == "s") {
-    Serial.print("s");
-  } else if (joint == "cycle") {
+  if (cmd == "cycle") {
     Serial.print("s");
     delay(500);
     Serial.print("ksit");
@@ -91,11 +76,25 @@ void handleCalibration() {
     Serial.print("kbalance");
     delay(2000);
     Serial.print("c");
-  } else {
-    Serial.print("c" + joint + " " + offset);
   }
-  Serial.println("");
+  
+  Serial.print(cmd);
+  server.send(200);
+}
+
+void handleCalibrationPage() {
   server.send(200, "text/html", renderHtml(FPSTR(calibrationpage), "Calibration"));
+  Serial.print("c");
+}
+
+void handleSerialOutput() {
+  if (Serial.available() > 0) {
+    String output;
+    output += Serial.read();
+    server.send(200, "text/plain", output);
+  } else {
+    server.send(204);
+  }
 }
 
 void setup(void) {
@@ -121,7 +120,7 @@ void setup(void) {
   server.on("/commander", handleCommand);
   server.on("/actions", handleActionPage);
   server.on("/calibrationpage", handleCalibrationPage);
-  server.on("/calibration", handleCalibration);
+  server.on("/getOutput", handleSerialOutput);
 
   server.begin();
   Serial.println("HTTP server started");

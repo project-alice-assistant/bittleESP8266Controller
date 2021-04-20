@@ -50,20 +50,28 @@ const char calibrationpage[] PROGMEM = R"=====(
         <button style="width: 25%" onclick="decrease(14)">(14) Lower joint -</button>
     </div>
     <div class="card">
-        <button class="redBG" style="width: 100%" onclick="location.href='/calibration?c=s'">Save offsets</button>
+        <button class="redBG" style="width: 100%" onclick="sendCmd('s')">Save offsets</button>
     </div>
     <div class="card">
-        <button class="redBG" style="width: 100%" onclick="location.href='/calibration?c=cycle'">Check with a cycle</button>
+        <button class="redBG" style="width: 100%" onclick="sendCmd('cycle')">Check with a cycle</button>
+    </div>
+    <div class="card">
+        <div class="console" id="serialOutput">Serial output</div>
     </div>
     <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            let query = window.location.search;
-            const urlParams = new URLSearchParams(query);
-            if (urlParams.has('o')) {
-                let offset = Math.max(1, Math.min(Math.abs(parseInt(urlParams.get('o'))) - 1000, 10));
-                document.getElementById('offsetAmountSetter').value = offset;
-                setOffset(offset);
-            }
+        document.addEventListener('DOMContentLoaded', function() {            
+            setInterval(function() {
+                fetch('/getOutput', {
+                    method: "POST"
+                }).then(response => {
+                    return response.text();
+                }).then(text => {
+                    if (!text) {
+                      return;
+                    }
+                    document.getElementById('serialOutput').innerHTML = `${text}<br/>${document.getElementById('serialOutput').innerHTML}`;
+                });
+            }, 500);
         });
 
         function setOffset(value) {
@@ -71,11 +79,11 @@ const char calibrationpage[] PROGMEM = R"=====(
         }
 
         function increase(joint) {
-            window.location.href=`/calibration?c=${joint}&o=${1000 + parseInt(document.getElementById('offsetAmountSetter').value)}`;
+            sendCmd(`c${joint} ${1000 + parseInt(document.getElementById('offsetAmountSetter').value)}`);
         }
 
         function decrease(joint) {
-            window.location.href=`/calibration?c=${joint}&o=${-1000 - parseInt(document.getElementById('offsetAmountSetter').value)}`;
+            sendCmd(`c${joint} ${-1000 - parseInt(document.getElementById('offsetAmountSetter').value)}`);
         }
     </script>
 </div>
